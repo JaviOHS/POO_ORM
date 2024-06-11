@@ -28,9 +28,10 @@ def valida_numero_entero_positivo(value):
         raise ValidationError('Debe ingresar un número entero positivo válido.')
 
 def valida_numero_flotante_positivo(value):
-    try:
-        valor_float = float(value)
-        if valor_float <= 0:
-            raise ValidationError('Debe ingresar un número flotante positivo válido.')
-    except ValueError:
-        raise ValidationError('Debe ingresar un número flotante válido.')
+    if value is not None:
+        try:
+            valor_float = float(value)
+            if valor_float <= 0:
+                raise ValidationError('Debe ingresar un número flotante positivo válido.')
+        except ValueError:
+            raise ValidationError('Debe ingresar un número flotante válido.')

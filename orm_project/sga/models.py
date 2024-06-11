@@ -7,9 +7,18 @@ class ModelBase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    state = models.BooleanField('Activo', default=True)
 
     class Meta:
         abstract = True
+
+    def delete(self, using=None, keep_parents=False):
+        self.state = False
+        self.save()
+
+    @classmethod
+    def active_objects(cls):
+        return cls.objects.filter(state=True)
 
 class Period(ModelBase):
     start_date = models.DateField()
@@ -51,7 +60,7 @@ class NoteDetail(ModelBase):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     note1 = models.FloatField(validators=[valida_numero_flotante_positivo])
     note2 = models.FloatField(validators=[valida_numero_flotante_positivo])
-    recuperation = models.FloatField(validators=[valida_numero_flotante_positivo])
+    recuperation = models.FloatField(blank=True, null=True,validators=[valida_numero_flotante_positivo])
     observation = models.TextField(blank=True, null=True)
 
     def __str__(self):
