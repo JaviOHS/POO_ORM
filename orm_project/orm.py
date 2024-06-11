@@ -8,16 +8,30 @@ django.setup()
 from django.contrib.auth.models import User
 from django.utils import timezone
 from sga.models import Period, Subject, Teacher, Note, Student, NoteDetail
-from django.db.models import Q, Window, F
-from django.db.models.functions import Length 
+from django.db.models import Q, Window, F, OuterRef, Subquery, Exists, Sum, FloatField, ExpressionWrapper, Max, Min, Avg, Count, Case, When, Value
+from django.db.models.functions import Length, Coalesce
 
 red_color = "\033[1;31m"
 yellow_color = "\033[1;33m"
+purple_color = "\033[1;35m"
 reset_color = "\033[0m"
-
+    
 def probar_orm():
+    def title(lol):
+        print(red_color + lol + reset_color)
+        
+    def print_message(lol, add=None):
+        if lol:
+            if add:
+                [print(f"- {add} {i}") for i in lol]
+            else:
+                [print(f"- {i}") for i in lol]
+        else:
+            print(f"No hay registros.")
+        print(purple_color + '------' * 15 + reset_color)
+        
     print(yellow_color + '\nBulk Create' + reset_color)
-    print(red_color + '1. Insertar 10 registros en la tabla Periodo:')
+    title('1. Insertar 10 registros en la tabla Periodo:')
     def period_create(create=False):
         if create:
             user = User.objects.get(pk=1)
@@ -39,7 +53,7 @@ def probar_orm():
             print(reset_color + "Registros creados.")
     # period_create(create=True)
     
-    print(red_color + "2. Insertar 10 registros en la tabla Asignaturas:")
+    title("2. Insertar 10 registros en la tabla Asignaturas:")
     def subject_create(create=False):
         if create:
             user = User.objects.get(pk=1)
@@ -61,7 +75,7 @@ def probar_orm():
             print(reset_color + "Registros creados.")
     # subject_create(create=True)
     
-    print(red_color + "3. Insertar 10 registros en la tabla Profesor:")
+    title("3. Insertar 10 registros en la tabla Profesor:")
     def teacher_create(create=False):
         if create:
             user = User.objects.get(pk=1)
@@ -83,7 +97,7 @@ def probar_orm():
             print(reset_color + "Registros creados.")
     # teacher_create(create=True)
     
-    print(red_color + "4. Insertar 10 registros en la tabla Estudiante:")
+    title("4. Insertar 10 registros en la tabla Estudiante:")
     def student_create(create=False):
         if create:
             user = User.objects.get(pk=1)
@@ -105,7 +119,7 @@ def probar_orm():
             print(reset_color + "Registros creados.")
     # student_create(create=True)
     
-    print(red_color + "5. Insertar 10 registros en la tabla Notas (.save, .create):")
+    title("5. Insertar 10 registros en la tabla Notas (.save, .create):")
     def note_create(create=False):
         if create:
             user = User.objects.get(pk=1)
@@ -126,7 +140,7 @@ def probar_orm():
             print(reset_color + "Registros creados.")  
     # note_create(create=True)
     
-    print(red_color + "6. Insertar 10 registros en la tabla DetalleNota: (.save, .create):")
+    title("6. Insertar 10 registros en la tabla DetalleNota: (.save, .create):")
     def note_detail_create(create=False):
         if create:
             user = User.objects.get(pk=1)
@@ -157,151 +171,311 @@ def probar_orm():
     
     def basic_queries():
         print(yellow_color + "\nConsultas" + reset_color)
-        print(red_color + "1. Seleccionar todos los estudiantes cuyo nombre comienza con 'Est':")
+        title("1. Seleccionar todos los estudiantes cuyo nombre comienza con 'Est':")
         students_est = Student.objects.filter(name__istartswith='Est') # __istartswith: Busca los registros que comiencen con 'Est' sin importar si son mayúsculas o minúsculas.
-        [print(f"{reset_color}- {student}") for student in students_est] if students_est else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "2. Seleccionar todos los profesores cuyo nombre contiene 'or':")
+        print_message(students_est)
+                
+        title("2. Seleccionar todos los profesores cuyo nombre contiene 'or':")
         teachers_or = Teacher.objects.filter(name__icontains='or') # __icontains: Busca los registros que contengan 'or' sin importar si son mayúsculas o minúsculas.
-        [print(f"{reset_color}- {teacher}") for teacher in teachers_or] if teachers_or else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "3. Seleccionar todas las asignaturas cuya descripción termina en '10':")
+        print_message(teachers_or)
+                
+        title("3. Seleccionar todas las asignaturas cuya descripción termina en '10':")
         assign_10 = Subject.objects.filter(description__endswith='10') # __endswith: Busca los registros que terminen con '10'.
-        [print(f"{reset_color}- {subject}") for subject in assign_10] if assign_10 else print(f"{reset_color}No hay registros.")	
-        
-        print(red_color + "4. Seleccionar todas las notas con nota1 mayor que 8.0:")
+        print_message(assign_10)
+                
+        title("4. Seleccionar todas las notas con nota1 mayor que 8.0:")
         notes_8 = NoteDetail.objects.filter(note1__gt=8.0) # __gt: Busca los registros con nota1 mayor que 8.0.
-        [print(f"{reset_color}- {note}") for note in notes_8] if notes_8 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "5. Seleccionar todas las notas con nota2 menor que 9.0:")
+        print_message(notes_8)
+                
+        title("5. Seleccionar todas las notas con nota2 menor que 9.0:")
         notes_9 = NoteDetail.objects.filter(note2__lt=9.0) # __lt: Busca los registros con nota2 menor que 9.0.
-        [print(f"{reset_color}- {note}") for note in notes_9] if notes_9 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "6. Seleccionar todas las notas con recuperacion igual a 9.5:")
+        print_message(notes_9)
+                
+        title("6. Seleccionar todas las notas con recuperacion igual a 9.5:")
         recuperation_9_5 = NoteDetail.objects.filter(recuperation=9.5) # Es el mismo igual.
-        [print(f"{reset_color}- {note}") for note in recuperation_9_5] if recuperation_9_5 else print(f"{reset_color}No hay registros.")
-    #basic_queries()
+        print_message(recuperation_9_5)
+    basic_queries()
     
     def conditionals_queries():
         print(yellow_color + "\nConsultas con Condiciones Logicas" + reset_color)
-        print(red_color + "7. Seleccionar todos los estudiantes cuyo nombre comienza con 'Est' y su cedula termina en '1':")
+        title("7. Seleccionar todos los estudiantes cuyo nombre comienza con 'Est' y su cedula termina en '1':")
         students = Student.objects.filter(
             Q(name__istartswith='Est') & Q(dni__iendswith="1") # Para realizar consultas con condiciones logicas solo se importa Q.
         )
-        [print(f"{reset_color}- {student}") for student in students] if students else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "8. Seleccionar todas las asignaturas cuya descripción contiene 'Asig' o termina en '5':")
+        print_message(students)
+                
+        title("8. Seleccionar todas las asignaturas cuya descripción contiene 'Asig' o termina en '5':")
         subjects = Subject.objects.filter(
             Q(description__icontains='Est') | Q(description__endswith="5")
         )
-        [print(f"{reset_color}- {subject}") for subject in subjects] if subjects else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "9. Seleccionar todos los profesores cuyo nombre no contiene 'or':")
+        print_message(subjects)
+                
+        title("9. Seleccionar todos los profesores cuyo nombre no contiene 'or':")
         teachers = Teacher.objects.filter(
             ~Q(name__icontains='or') # Se coloca ~ al principio.
         )
-        [print(f"{reset_color}- {teacher}") for teacher in teachers] if teachers else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "10. Seleccionar todas las notas con nota1 mayor que 7.0 y nota2 menor que 8.0:")
+        print_message(teachers)
+                
+        title("10. Seleccionar todas las notas con nota1 mayor que 7.0 y nota2 menor que 8.0:")
         notes = NoteDetail.objects.filter(
             Q(note1__gt=7.0) & Q(note2__lt=8.0)
         )
-        [print(f"{reset_color}- {note}") for note in notes] if notes else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "11. Seleccionar todas las notas con recuperacion igual a None o nota2 mayor que 9.0:")
+        print_message(notes)
+                
+        title("11. Seleccionar todas las notas con recuperacion igual a None o nota2 mayor que 9.0:")
         notes_2 = NoteDetail.objects.filter(
             Q(recuperation=None) | Q(note2__gt=9.0)
         )
-        [print(f"{reset_color}- {note}") for note in notes_2] if notes_2 else print(f"{reset_color}No hay registros.")
-    # conditionals_queries()
+        print_message(notes_2)
+    conditionals_queries()
     
     def numerical_queries():
         print(yellow_color + "\nConsultas con Funciones Numericas" + reset_color)
-        print(red_color + "12. Seleccionar todas las notas con nota1 entre 7.0 y 9.0:")
+        title("12. Seleccionar todas las notas con nota1 entre 7.0 y 9.0:")
         notes_3 = NoteDetail.objects.filter(
             note1__range=(7.0,9.0) # __range: Busca los registros con nota1 entre 7.0 y 9.0.
         )
-        [print(f"{reset_color}- {note}") for note in notes_3] if notes_3 else print(f"{reset_color}No hay registros.")
-    
-        print(red_color + "13. Seleccionar todas las notas con nota2 fuera del rango 6.0 a 8.0:")
+        print_message(notes_3)
+            
+        title("13. Seleccionar todas las notas con nota2 fuera del rango 6.0 a 8.0:")
         notes_4 = NoteDetail.objects.filter(
             ~Q(note2__range=(6.0,8.0))
         )
-        [print(f"{reset_color}- {note}") for note in notes_4] if notes_4 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "14. Seleccionar todas las notas cuya recuperacion no sea None:")
+        print_message(notes_4)
+                
+        title("14. Seleccionar todas las notas cuya recuperacion no sea None:")
         notes_5 = NoteDetail.objects.filter(
             ~Q(recuperation=None) 
         )
-        [print(f"{reset_color}- {note}") for note in notes_5] if notes_5 else print(f"{reset_color}No hay registros.")
-    # numerical_queries()
+        print_message(notes_5)
+    numerical_queries()
     
     def date_queries():
         print(yellow_color + "\nConsultas con Funciones de Fecha" + reset_color)
-        print(red_color + "15. Seleccionar todas las notas creadas en el último año:")
+        title("15. Seleccionar todas las notas creadas en el último año:")
         notes = NoteDetail.objects.filter(
             created_at__year=2024
         )
-        [print(f"{reset_color}- {note}") for note in notes] if notes else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "16. Seleccionar todas las notas creadas en el último mes:")
+        print_message(notes)
+                
+        title("16. Seleccionar todas las notas creadas en el último mes:")
         last_month = timezone.now() - timezone.timedelta(days=30)
         notes_2 = NoteDetail.objects.filter(
             created_at__gte=last_month
         )
-        [print(f"{reset_color}- {note}") for note in notes_2] if notes_2 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "17. Seleccionar todas las notas creadas en el último dia:")
+        print_message(notes_2)
+                
+        title("17. Seleccionar todas las notas creadas en el último dia:")
         last_day = timezone.now() - timezone.timedelta(days=1)
         notes_3 = NoteDetail.objects.filter(
             created_at__gte=last_day
         )
-        [print(f"{reset_color}- {note}") for note in notes_3] if notes_3 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "18. Seleccionar todas las notas creadas antes del 2023:")
+        print_message(notes_3)
+                
+        title("18. Seleccionar todas las notas creadas antes del 2023:")
         notes_4 = NoteDetail.objects.filter(
             created_at__year__lt=2023
         )
-        [print(f"{reset_color}- {note}") for note in notes_4] if notes_4 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "19. Seleccionar todas las notas creadas en marzo de cualquier año:")    
+        print_message(notes_4)
+                
+        title("19. Seleccionar todas las notas creadas en marzo de cualquier año:")    
         march_notes = NoteDetail.objects.filter(
             created_at__month=3
         )
-        [print(f"{reset_color}- {note}") for note in march_notes] if march_notes else print(f"{reset_color}No hay registros.")
-    # date_queries()
+        print_message(march_notes)
+    date_queries()
     
     def advances_queries():
         print(yellow_color + "\nConsultas con Funciones Avanzadas" + reset_color)
-        print(red_color + "20. Seleccionar todos los estudiantes cuyo nombre tiene exactamente 10 caracteres:")
+        title("20. Seleccionar todos los estudiantes cuyo nombre tiene exactamente 10 caracteres:")
         students = Student.objects.annotate(name_length=Length('name')).filter(name_length=10) # Se define el campo name con la longitud y luego filtrar por la longitud.
-        [print(f"{reset_color}- {student}") for student in students] if students else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "21. Seleccionar todas las notas con nota1 y nota2 mayores a 7.5:")
+        print_message(students)
+                
+        title("21. Seleccionar todas las notas con nota1 y nota2 mayores a 7.5:")
         notes = NoteDetail.objects.filter(
             Q(note1__gt=7.5) & Q(note2__gt=7.5) # Se puede directamente con (note1__gt=7.5, note2__gt=7.5).
         )
-        [print(f"{reset_color}- {note}") for note in notes] if notes else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "22. Seleccionar todas las notas con recuperacion no nula y nota1 mayor a nota2:")
+        print_message(notes)
+                
+        title("22. Seleccionar todas las notas con recuperacion no nula y nota1 mayor a nota2:")
         notes_2 = NoteDetail.objects.filter(
             ~Q(recuperation=None) & Q(note1__gt=F('note2')) # Se utiliza F para comparar campos.
         )
-        [print(f"{reset_color}- {note}") for note in notes_2] if notes_2 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "23. Seleccionar todas las notas con nota1 mayor a 8.0 o nota2 igual a 7.5:")
+        print_message(notes_2)
+                
+        title("23. Seleccionar todas las notas con nota1 mayor a 8.0 o nota2 igual a 7.5:")
         notes_3 = NoteDetail.objects.filter(
             Q(note1__gt=8.0) | Q(note2=7.5)
         )
-        [print(f"{reset_color}- {note}") for note in notes_3] if notes_3 else print(f"{reset_color}No hay registros.")
-        
-        print(red_color + "24. Seleccionar todas las notas con recuperacion mayor a nota1 y nota2:")
+        print_message(notes_3)
+                
+        title("24. Seleccionar todas las notas con recuperacion mayor a nota1 y nota2:")
         notes_4 = NoteDetail.objects.filter(
             recuperation__gt=F('note1') + F('note2') # Se suma los campos.
         )
-        [print(f"{reset_color}- {note}") for note in notes_4] if notes_4 else print(f"{reset_color}No hay registros.")
+        print_message(notes_4)
     advances_queries()
         
+    def subqueries_annotations():
+        print(yellow_color + "\nConsultas con Subconsultas y Anotaciones" + reset_color)
+        title("25. Seleccionar todos los estudiantes con al menos una nota de recuperación:")
+        recuperation_notes = NoteDetail.objects.filter(
+            student=OuterRef('pk'), recuperation__isnull=False # OuterRef: para referenciar el campo pk.
+        )
+        students_recuperation = Student.objects.annotate(
+            has_recuperation=Exists(recuperation_notes) # Exists: para verificar si existe al menos un registro.
+        ).filter(has_recuperation=True)
+        print_message(students_recuperation)
+                
+        def subject_specific (subject): 
+            title("26. Seleccionar todos los profesores que han dado una asignatura específica:")
+            subject_subquery = Subject.objects.filter(description=subject).values('pk') # Otener el pk de la asignatura.
+            subject_ = Note.objects.filter(
+                subject__id=OuterRef('pk'),
+                subject__in=subject_subquery # Verificar si el pk de la asignatura esta en la subconsulta.
+            )
+            teachers = Teacher.objects.filter(
+                Exists(subject_)
+            )
+            print_message(teachers, add=f"Docentes que han dado la asignatura de {subject}: ")
+        subject_specific('Matemáticas')        
+        
+        title("27. Seleccionar todas las asignaturas que tienen al menos una nota registrada:")
+        subject_note = Note.objects.filter(
+            subject=OuterRef('pk')
+        )
+        subject_note_register = Subject.objects.annotate(
+            note_exist=Exists(subject_note) 
+        ).filter(note_exist=True) # Solo materias que tienen al menos una nota registrada.
+        print_message(subject_note_register)
+                
+        title("28. Seleccionar todas las asignaturas que no tienen notas registradas:")
+        subject_note_register_2 = Subject.objects.annotate(
+            note_exist=Exists(subject_note)
+        ).filter(note_exist=False)
+        print_message(subject_note_register_2)
+                
+        title("29. Seleccionar todos los estudiantes que no tienen notas de recuperación:")
+        students = Student.objects.annotate( 
+            recuperation=Exists(recuperation_notes) 
+        ).filter(recuperation=False)
+        print_message(students)
+                
+        title("30. Seleccionar todas las notas cuyo promedio de nota1 y nota2 es mayor a 8.0:")
+        notes = NoteDetail.objects.annotate(
+            average=(F('note1') + F('note2')) / 2 # average: Crea un campo calculado con la suma de note1 y note2 en la consulta del ORM.
+        ).filter(average__gt=8.0)
+        print_message(notes)
+                
+        title("31. Seleccionar todas las notas con nota1 menor que 6.0 y nota2 mayor que 7.0:")
+        calculte_notes = NoteDetail.objects.filter(
+            note1__lt=6.0, note2__gt=7.0
+        )
+        print_message(calculte_notes)
+                
+        title("32. Seleccionar todas las notas con nota1 en la lista [7.0, 8.0, 9.0]:")
+        note_list = [7.9, 8.0, 9.0]
+        notes_in_list = NoteDetail.objects.filter(
+            note1__in=note_list
+        )
+        specific_notes = NoteDetail.objects.filter(
+            note1__in=Subquery(notes_in_list.values('note1')) # Subquery: para obtener los valores de la subconsulta.
+        )
+        print_message(specific_notes) 
+        
+        title("33. Seleccionar todas las notas cuyo id está en un rango del 1 al 5:")
+        range_notes = Note.objects.filter(
+            id__range=(1,5)
+        )
+        specific_notes = Note.objects.filter(
+            id__in=Subquery(range_notes.values('id'))
+        )
+        [print(f"-ID: {note.id} {note}") for note in specific_notes] if specific_notes else print(f"{reset_color}No hay registros.");print(purple_color + '------' * 15 + reset_color)
+        
+        title("34. Seleccionar todas las notas cuyo recuperacion no está en la lista [8.0, 9.0, 10.0]:")
+        note_list_2 = [8.0, 9.0, 10.0]
+        recuperation_note_in_list = NoteDetail.objects.filter(
+            recuperation__in=note_list_2
+        )
+        specific_notes = NoteDetail.objects.filter(
+            recuperation__in=Subquery(recuperation_note_in_list.values('recuperation'))
+        )
+        print_message(specific_notes)
+        
+        def calculate_notes(student):
+            title("35. Suma de todas las notas de un estudiante:")
+            notes = NoteDetail.objects.filter(student=student)
+            total_note1 = notes.aggregate(total_note1=Sum('note1', output_field=FloatField()))['total_note1'] or 0
+            total_note2 = notes.aggregate(total_note2=Sum('note2', output_field=FloatField()))['total_note2'] or 0
+            total_recuperation = notes.aggregate(total_recuperation=Sum('recuperation', output_field=FloatField()))['total_recuperation'] or 0
+            total = total_note1 + total_note2 + total_recuperation
+            print_message(notes)
+            print(f"- Suma total de notas: {total}");print(purple_color + '------' * 15 + reset_color)
+        calculate_notes(Student.objects.get(pk=1))
+        
+        def max_note(student):
+            title("36. Nota máxima obtenida por un estudiante:")
+            note_max = NoteDetail.objects.filter(student=student).aggregate(
+                max_note1=Max('note1'),
+                max_note2=Max('note2'),
+                max_recuperation=Max('recuperation')
+            )
+            max_note_values = [
+                note_max.get('max_note1', 0),
+                note_max.get('max_note2', 0),
+                note_max.get('max_recuperation', 0)
+            ]
+            max_note_values = [value for value in max_note_values if value is not None]
+            if max_note_values:
+                max_note_value = max(max_note_values)
+                print(f"- Nota máxima obtenida por el estudiante {student}: {max_note_value}")
+            else:
+                print(f"- El estudiante {student} no tiene ninguna nota registrada.")
+            print(purple_color + '------' * 15 + reset_color)
+        max_note(Student.objects.get(pk=1))
+
+        def min_note(student):
+            title("37. Nota mínima obtenida por un estudiante:")
+            note_min = NoteDetail.objects.filter(student=student).aggregate(
+                min_note1=Min('note1'),
+                min_note2=Min('note2'),
+                min_recuperation=Min('recuperation')
+            )
+            min_note_values = [
+                note_min.get('min_note1', 0),
+                note_min.get('min_note2', 0),
+                note_min.get('min_recuperation', 0)
+            ]
+            min_note_values = [value for value in min_note_values if value is not None]
+            
+            if min_note_values:
+                min_note_value = min(min_note_values)
+                print(f"- Nota mínima obtenida por el estudiante {student}: {min_note_value}")
+            else:
+                print(f"- El estudiante {student} no tiene ninguna nota registrada.")
+            print(purple_color + '------' * 15 + reset_color)
+        min_note(Student.objects.get(pk=1))
+        
+        def total_notes(student):
+            title("38. Contar el número total de notas de un estudiante:")
+            student_notes = NoteDetail.objects.filter(student=student).aggregate(
+                total_notes=Count('id')
+            )
+            print_message(NoteDetail.objects.filter(student=student))
+            print(f"- Número total de notas: {student_notes['total_notes']}");print(purple_color + '------' * 15 + reset_color)
+        total_notes(Student.objects.get(pk=1))
+        
+        def average_notes(student):
+            title("39. Promedio de todas las notas de un estudiante sin incluir recuperación")
+            student_notes = NoteDetail.objects.filter(student=student).aggregate(
+                average_note1=Avg('note1'),
+                average_note2=Avg('note2')
+            )
+            total = round((student_notes['average_note1'] + student_notes['average_note2'])/2,2)
+            print_message(NoteDetail.objects.filter(student=student))
+            print(f"- Promedio de notas del estudiante {student}: {total}");print(purple_color + '------' * 15 + reset_color)
+        average_notes(Student.objects.get(pk=1))
+    subqueries_annotations()
     
 if __name__ == "__main__":
     probar_orm()
