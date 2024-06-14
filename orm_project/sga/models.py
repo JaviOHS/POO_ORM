@@ -68,7 +68,7 @@ class Student(ModelBase):
 
 class NoteDetail(ModelBase):
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE,related_name='note_details') # Se agrega related_name para poder acceder a los detalles de notas de un estudiante
     note1 = models.FloatField(validators=[valida_numero_flotante_positivo])
     note2 = models.FloatField(validators=[valida_numero_flotante_positivo])
     recuperation = models.FloatField(
