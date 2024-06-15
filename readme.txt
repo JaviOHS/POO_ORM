@@ -1,6 +1,7 @@
 Para instalar las dependencias:
     pip install -r requirements.txt
 
+<- ORM ->
 Ejecutar para guardar datos: 
     python orm.py
 
@@ -16,3 +17,10 @@ Pasos para consultar datos en en Shell de Django:
         for period in periods:
             print(period)
 
+<- WEB ->
+Ejecutar para realizar cambios:
+    py manage.py livereload
+    npm run build
+    py manage.py runserver
+
+    

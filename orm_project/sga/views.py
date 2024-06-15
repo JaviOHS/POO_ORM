@@ -1,3 +1,8 @@
 from django.shortcuts import render
 
-# Create your views here.
+# ----------------- Vistas de Home -----------------
+def home(request):
+    data = {"title1": "SGA - Inicio",
+            "title2": "Sistema de Gestion Academica"}
+    return render(request, 'sga/home.html', data)
+

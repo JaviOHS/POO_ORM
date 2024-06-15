@@ -1,3 +1,6 @@
 Django
 django-extensions
 ipython
+django-livereload-server==0.3.2
+django-tailwind==3.1.0
+setuptools

@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Tailwind css -->
+	<link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+	<!-- Icono -->
+	<link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- Titulo -->
+	<title>{% block title %} SGA {% endblock title %}</title>
+</head>
+
+<body class="bg-purple-100 dark:bg-black text-lg">
+
+	<header class="top-0 left-0 right-0 z-50 bg-transparent fixed w-full transition duration-300 ease-in-out">
+		<nav class="border-gray-200 dark:bg-principal">
+			<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+				<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+					<span class="self-center whitespace-nowrap dark:text-blue-300 font-extrabold">Iguanas Corp.</span>
+				</a>
+				<div class="flex items-center md:order-2 space-x-3 md:space-x-4 rtl:space-x-reverse">
+
+					<span id="themeIconContainer"
+						class="dark:bg-gray inline-block p-2 rounded border border-gray-200 dark:border-gray-700 cursor-pointer">
+						<i id="themeIcon" class="fas fa-moon text-gray-300 dark:text-gray-500"></i>
+					</span>
+
+					<div class="dark:border-gray-800 relative hidden md:block">
+						<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer text-gray-500">
+							<svg class="w-4 h-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+								fill="none" viewBox="0 0 20 20">
+								<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+									stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+							</svg>
+							<span class="sr-only">Search icon</span>
+						</div>
+						<input type="text" id="search-navbar"
+							class="border-gray-200 dark:border-gray-700 block w-full p-2 pl-10 text-sm text-gray-400 border rounded-lg bg-transparent focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-700 placeholder-gray-400 dark:placeholder-gray-500">
+					</div>
+				</div>
+			</div>
+		</nav>
+		<hr class="border-gray-200 dark:border-gray-700">
+	</header>
+
+	<!-- Contenido -->
+	<section>
+		{% block content %}
+		{% endblock content %}
+	</section>
+	<!-- Cierre del contenido -->
+
+	<!-- Scripts -->
+	<script src="{% static 'js/preline.js' %}"></script>
+
+	<!---DARK MODE-->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const themeToggleBtn = document.getElementById('themeIconContainer');
+			const body = document.body;
+			const themeIcon = document.getElementById('themeIcon');
+
+			// Verifica si el modo oscuro está activado en el almacenamiento local
+			const isDarkModeEnabled = localStorage.getItem('darkModeEnabled') === 'true';
+
+			// Función para cambiar el ícono del tema
+			function toggleThemeIcon() {
+				if (document.documentElement.classList.contains('dark')) {
+					themeIcon.classList.remove('fa-moon');
+					themeIcon.classList.add('fa-sun');
+				} else {
+					themeIcon.classList.remove('fa-sun');
+					themeIcon.classList.add('fa-moon');
+				}
+			}
+
+			// Cambiar el ícono del tema al cargar la página
+			toggleThemeIcon();
+
+			// Agrega un listener para el evento 'click' en el botón
+			themeToggleBtn.addEventListener('click', function (event) {
+				event.preventDefault(); // Previene el comportamiento predeterminado del ícono
+				// Cambia el tema de claro a oscuro y viceversa
+				document.documentElement.classList.toggle('dark');
+
+				// Cambia el ícono del tema
+				toggleThemeIcon();
+
+				// Actualiza el estado del modo oscuro en el almacenamiento local
+				const isDarkModeNowEnabled = document.documentElement.classList.contains('dark');
+				localStorage.setItem('darkModeEnabled', isDarkModeNowEnabled);
+			});
+		});
+	</script>
+</body>
