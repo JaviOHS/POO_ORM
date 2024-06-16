@@ -11,6 +11,13 @@ from sga.models import Period, Subject, Teacher, Note, Student, NoteDetail
 from django.db.models import Q,Window,F,OuterRef,Subquery,Exists,Sum,FloatField,ExpressionWrapper,Max,Min,Avg,Count,Case,When,Value
 from django.db.models.functions import Length, Coalesce
 
+from django.db.models import Sum, Count, Value
+
+from django.utils import timezone
+
+
+
+
 red_color = "\033[1;31m"
 yellow_color = "\033[1;33m"
 purple_color = "\033[1;35m"
@@ -695,7 +702,7 @@ def probar_orm():
             print(f"- Promedio de notas del estudiante {student}: {total}")
             print(purple_color + "------" * 15 + reset_color)
 
-        average_notes(Student.objects.get(pk=1))
+        # average_notes(Student.objects.get(pk=1))
 
     subqueries_annotations()
 
@@ -703,14 +710,16 @@ def probar_orm():
         print(yellow_color + "\nSubconsultas con modelos relacionados - Aplicar relaciones inversas" + reset_color)
         
         def student_notes():
-            title(
-                "40. Dado un estudiante obtener todas sus notas con el detalle de todos sus datos relacionados:"
-            )
+            title("40. Dado un estudiante obtener todas sus notas con el detalle de todos sus datos relacionados:")
+            
             try:
-                student = Student.objects.get(pk=1)
+                student_id = 3  # Cambia este valor al ID del estudiante que deseas buscar
+                student = Student.objects.get(pk=student_id)
+                print(f"Estudiante encontrado: {student.name}")
             except Student.DoesNotExist:
                 print("El estudiante especificado no existe.")
                 return
+            
             notes_details = NoteDetail.objects.filter(student=student).values(
                 "note__subject__description",
                 "note__period__start_date",
@@ -721,16 +730,23 @@ def probar_orm():
                 "recuperation",
                 "observation",
             )
-            notes = NoteDetail.objects.filter(student=student).annotate(
-                note_subject=Subquery(notes_details.values("note__subject__description")[:1]),
-                note_period_start=Subquery(
-                    notes_details.values("note__period__start_date")[:1]
-                ),
-                note_period_end=Subquery(notes_details.values("note__period__end_date")[:1]),
-                note_teacher=Subquery(notes_details.values("note__teacher__name")[:1]),
-            )
-            note_detail(notes)
+            
+            if notes_details.exists():
+                for detail in notes_details:
+                    print(
+                        f"Materia: {detail['note__subject__description']}, \n"
+                        f"Periodo: {detail['note__period__start_date']} - {detail['note__period__end_date']}, \n"
+                        f"Profesor: {detail['note__teacher__name']}, \n"
+                        f"Nota1: {detail['note1']} \nNota2: {detail['note2']}, \n"
+                        f"Recuperación: {detail['recuperation']} \nObservación: {detail['observation']}"
+                    )
+            else:
+                print("El estudiante no tiene notas registradas.")
+            print(purple_color + "------" * 15 + reset_color)
+
         student_notes()
+        
+        
         
         def specific_period():
             title("41. Obtener todas las notas de un período específico:")
@@ -784,6 +800,7 @@ def probar_orm():
                 print("No hay detalles de notas para las notas del profesor especificado.")
                 return
             note_detail(details_note)
+
         specific_teacher()
         
         def notes_specific_student():
@@ -798,6 +815,8 @@ def probar_orm():
                 print("El estudiante no cumple con los requisitos especificados. (Nota 1 y 2 < 7.0 ) ")
                 return
             note_detail(notes)
+        print(purple_color + "------" * 15 + reset_color)
+
         notes_specific_student()
         
         def period_notes_students_order():
@@ -807,12 +826,12 @@ def probar_orm():
             except Student.DoesNotExist:
                 print("El estudiante especificado no existe.")
                 return
-            notes = NoteDetail.objects.filter(student=student).order_by("note__period__start_date") # order_by: Ordenar por el campo especificado.
+            notes = NoteDetail.objects.filter(student=student).order_by("note__period__start_date")
             if not notes.exists():
                 print("El estudiante no tiene notas registradas.")
                 return
             note_detail(notes)
-            
+        print(purple_color + "------" * 15 + reset_color)
         period_notes_students_order()
         
         def count_notes_students():
@@ -826,11 +845,361 @@ def probar_orm():
             if notes == 0:
                 print("El estudiante especificado no tiene notas registradas.")
                 return
-            print(f"Estudiante: {students.name}\nCantidad total de notas: {notes}\n{purple_color}{"------" * 15}{reset_color}")
-        count_notes_students()
+            print(f"Estudiante: {students.name}\nCantidad total de notas: {notes}")
+        print(purple_color + "------" * 15 + reset_color)
+        count_notes_students()    
+    
+    
+        def average_notes_period():
+            title("47. Calcular el promedio de las notas de un estudiante en un período dado:")
+            try:
+                student = Student.objects.get(pk=1)
+                period = Period.objects.get(pk=2)
+            except (Student.DoesNotExist, Period.DoesNotExist):
+                print("El estudiante o el período especificado no existen.")
+                return
+
+            notes = NoteDetail.objects.filter(student=student, note__period=period)
+            if not notes.exists():
+                print(f"El estudiante {student.name} no tiene notas registradas en el período {period.start_date} - {period.end_date}.")
+                return
+
+            total_notes = notes.count()
+            total_note1 = notes.aggregate(total_note1=Sum("note1"))["total_note1"] or 0
+            total_note2 = notes.aggregate(total_note2=Sum("note2"))["total_note2"] or 0
+            total_recuperation = notes.aggregate(total_recuperation=Sum("recuperation"))["total_recuperation"] or 0
+
+            average_note = (total_note1 + total_note2 + total_recuperation) / (total_notes * 3)
+
+            print(f"Estudiante: {student.name}")
+            print(f"Período: {period.start_date} - {period.end_date}")
+            print(f"Promedio de notas: {average_note:.2f}")
+        print(purple_color + "------" * 15 + reset_color)
+
+        average_notes_period()
+
         
+        
+        def notes_with_observation(observation_text):
+            title("48. Consultar todas las notas con una observación específica:")
+            notes = NoteDetail.objects.filter(observation__icontains=observation_text)
+            if not notes.exists():
+                print(f"No hay notas registradas con la observación '{observation_text}'.")
+            else:
+                print(f"Notas con la observación '{observation_text}':")
+                note_detail(notes)
+        print(purple_color + "------" * 15 + reset_color)
+        observation = 'Necesita mejorar.'
+        notes_with_observation(observation)
+        
+        
+        
+        def student_notes_by_subject(student_id):
+            title("49. Obtener todas las notas de un estudiante ordenadas por asignatura:")
+            try:
+                student = Student.objects.get(pk=student_id)
+            except Student.DoesNotExist:
+                print("El estudiante especificado no existe.")
+                return
+
+            notes = NoteDetail.objects.filter(student=student).order_by("note__subject__description")
+            if not notes.exists():
+                print(f"El estudiante {student.name} no tiene notas registradas.")
+            else:
+                print(f"Notas del estudiante {student.name} ordenadas por asignatura:")
+                note_detail(notes)
+        print(purple_color + "------" * 15 + reset_color)
+        student_notes_by_subject(1)
+    
     subqueries_inverse_relationships()
 
+      
+    def sentences_update():
+        def sentences_update_note1(nota_new):
+            title("50. Actualizar nota1 para alumnos con nota1 < 20:")
+            notes = NoteDetail.objects.filter(note1__lt=nota_new)
+            if not notes.exists():
+                print(f"No hay notas registradas con nota1 < {nota_new}.")
+                return
+            notes.update(note1=nota_new)
+            print(f"Notas actualizadas con nota1 = {nota_new}:")
+            note_detail(notes)
+        print(purple_color + "------" * 15 + reset_color)
 
+        nota_new = 20
+        sentences_update_note1(nota_new)  
+        
+        
+        
+        def sentences_update_note2(nota_new):
+            title("51. Actualizar nota2 para alumnos con nota2 < 15:")
+            notes = NoteDetail.objects.filter(note2__lt=nota_new)
+            if not notes.exists():
+                print(f"No hay notas registradas con nota2 < {nota_new}.")
+                return
+            notes.update(note2=nota_new)
+            print(f"Notas actualizadas con nota2 = {nota_new}:")
+            note_detail(notes)
+        print(purple_color + "------" * 15 + reset_color)
+        nota_new = 10
+        sentences_update_note2(nota_new) 
+       
+       
+        def sentences_update_recuperation(nota_new):
+            title("52. Actualizar recuperación para alumnos con recuperación < 10:")
+            notes = NoteDetail.objects.filter(recuperation__lt=nota_new)
+            if not notes.exists():
+                print(f"No hay notas registradas con recuperación < {nota_new}.")
+                return
+            notes.update(recuperation=nota_new)
+            print(f"Notas actualizadas con recuperación = {nota_new}:")
+            note_detail(notes)
+        print(purple_color + "------" * 15 + reset_color)
+
+        nota_new = 40
+        sentences_update_recuperation(nota_new) 
+       
+       
+        def update_obserbation(mensaje):
+            title("53. Actualizar observación para alumnos que hayan aprobado:")
+            aprobados = NoteDetail.objects.filter(
+                Q(note1__gte=50, note2__gte=20) |  # Aprobados por la primera condición
+                Q(note1__gte=20, note2__gte=50) |  # Aprobados por la segunda condición
+                Q(note1__gte=50, recuperation__gte=20) |  # Aprobados por la tercera condición
+                Q(note2__gte=50, recuperation__gte=20)  # Aprobados por la cuarta condición
+            )
+
+            if not aprobados.exists():
+                print("No hay estudiantes aprobados.")
+            else:
+                # Actualizar la observación para los estudiantes aprobados
+                updated_count = aprobados.update(
+                    observation=mensaje
+                )
+                print(f"Se actualizó la observación de {updated_count} registros.")
+ 
+        print(purple_color + "------" * 15 + reset_color)
+        update_obserbation('Aprobado')
+        
+        
+        def update_notas_period():
+            title("54. Actualizar todas las notas en un período específico:")
+            try:
+                # Obtener el período
+                period_id = 9
+                period = Period.objects.get(pk=period_id)
+                print(f"Período seleccionado: {period}")
+
+                new_score = 7
+
+                # Filtrar las notas dentro del período
+                notes = NoteDetail.objects.filter(created_at__date__range=(period.start_date, period.end_date))                
+                note_count = notes.count()
+
+                if note_count > 0:
+                    print(f"Se encontraron {note_count} notas en el período especificado.")
+
+                    # Actualizar las notas con el nuevo puntaje
+                    updated_count = notes.update(score=new_score)
+                    print(f"Se actualizaron {updated_count} notas con el nuevo puntaje {new_score}.")
+                else:
+                    print("No se encontraron notas en el período especificado.")
+
+            except Period.DoesNotExist:
+                print(f"No se encontró ningún período con ID {period_id}.")
+            except ValueError:
+                print("ID de período inválido. Por favor, ingrese un valor numérico.")
+            except Exception as e:
+                print(f"Ocurrió un error al intentar actualizar las notas: {e}")
+        print(purple_color + "------" * 15 + reset_color)
+        update_notas_period()
+             
+    sentences_update()    
+    
+    
+    
+    def sentences_delete():
+        
+        def sentences_delete_student(student_id):
+            title("55. Eliminar físicamente todas las notas de un estudiante:")
+            try:
+                # Obtener el estudiante por su ID
+                student = Student.objects.get(pk=student_id)
+                print(f"Estudiante encontrado: {student.name}")
+
+                # Filtrar y contar las notas del estudiante
+                notas_a_eliminar = NoteDetail.objects.filter(student=student)
+                count_eliminadas = notas_a_eliminar.count()
+
+                if count_eliminadas > 0:
+                    # Eliminar las notas
+                    notas_a_eliminar.delete()
+                    print(f"Se eliminaron {count_eliminadas} notas del estudiante {student.name}.")
+                else:
+                    print(f"No se encontraron notas para el estudiante {student.name}.")
+
+            except Student.DoesNotExist:
+                print(f"No se encontró ningún estudiante con ID {student_id}.")
+            except Exception as e:
+                print(f"Ocurrió un error al intentar eliminar las notas: {e}")
+        print(purple_color + "------" * 15 + reset_color)
+        student_id = 1  # ID del estudiante cuyas notas deseas eliminar
+        sentences_delete_student(student_id)
+        
+        
+        
+        def sentences_delete_student_state(student_id):
+            title("56. Eliminar lógicamente todas las notas de un estudiante (en el campo state que indica si el registro está activo o no):")
+            try:
+                # Obtener el estudiante por su ID
+                student = Student.objects.get(pk=student_id)
+                print(f"Estudiante encontrado: {student.name}")
+                
+                # Filtrar las notas del estudiante
+                notas = NoteDetail.objects.filter(student=student)
+                print(f"Notas encontradas: {notas.count()}")
+
+                # Actualizar el campo 'state' a False para eliminar lógicamente las notas
+                updated_count = notas.update(state=False)
+                
+                print(f"Se actualizó la observación de {updated_count} registros.")
+                
+            except Student.DoesNotExist:
+                print(f"No se encontró ningún estudiante con ID {student_id}.")
+            except Exception as e:
+                print(f"Ocurrió un error al intentar actualizar las notas: {e}")
+
+        print(purple_color + "------" * 15 + reset_color)
+        studen_id = 2
+        sentences_delete_student_state(studen_id)
+        
+      
+        
+        def sentences_delete_notes(periodo_id):
+            title("57. Eliminar físicamente todas las notas de un período específico:")
+            
+            try:
+                # Obtener el período por su ID
+                periodo = Period.objects.get(pk=periodo_id)
+                print(f"Período encontrado: {periodo.start_date} - {periodo.end_date}")
+
+                # Filtrar las notas que pertenecen a ese período
+                notas_en_periodo = NoteDetail.objects.filter(
+                    note__period=periodo
+                )
+                notas_count = notas_en_periodo.count()
+                
+                # Eliminar físicamente las notas
+                notas_en_periodo.delete()
+
+                print(f"Se eliminaron físicamente {notas_count} notas del período del {periodo.start_date} al {periodo.end_date}.")
+
+            except Period.DoesNotExist:
+                print(f"No se encontró ningún período con ID {periodo_id}.")
+            except Exception as e:
+                print(f"Ocurrió un error al intentar eliminar las notas: {e}")
+                
+        print(purple_color + "------" * 15 + reset_color)
+        periodo_id = 8  # ID del período cuyas notas deseas eliminar
+        sentences_delete_notes(periodo_id)
+        
+        
+        def sentences_delete_period(periodo_id):
+            title("58. Eliminar lógicamente todas las notas de un período específico:")
+
+            try:
+                # Obtener el período por su ID
+                periodo = Period.objects.get(pk=periodo_id)
+                print(f"Período encontrado: {periodo.start_date} - {periodo.end_date}")
+
+                # Filtrar las notas que pertenecen a ese período
+                notas_en_periodo = NoteDetail.objects.filter(
+                    note__period=periodo
+                )
+                notas_count = notas_en_periodo.count()
+
+                # Eliminar lógicamente las notas (actualizar el campo state a False)
+                notas_en_periodo.update(state=False)
+
+                print(f"Se eliminaron lógicamente {notas_count} notas del período del {periodo.start_date} al {periodo.end_date}.")
+
+            except Period.DoesNotExist:
+                print(f"No se encontró ningún período con ID {periodo_id}.")
+            except Exception as e:
+                print(f"Ocurrió un error al intentar eliminar las notas: {e}")
+                
+        print(purple_color + "------" * 15 + reset_color)
+        periodo_id = 3  # ID del período cuyas notas deseas eliminar lógicamente
+        sentences_delete_period(periodo_id)
+        
+        
+        def sentences_delete_nota1():
+            title("59. Eliminar físicamente todas las notas que tengan una nota1 menor a 10:")
+
+            try:
+                notas_a_eliminar = NoteDetail.objects.filter(note1__lt=10)
+                count_notas = notas_a_eliminar.count()
+
+                notas_a_eliminar.delete()
+
+                print(f"Se eliminaron físicamente {count_notas} notas con nota1 menor a 10.")
+
+            except Exception as e:
+                print(f"Ocurrió un error al intentar eliminar las notas: {e}")
+        print(purple_color + "------" * 15 + reset_color)
+        sentences_delete_nota1()
+        
+    sentences_delete()  
+    
+    
+    def create_student_note():
+        title("60. Crear un registro de notas de un estudiante, simulando una inserción de los datos:")
+
+        try:
+            student_id = 3
+            student = Student.objects.get(pk=student_id)
+
+            teacher_id = 1
+            teacher = Teacher.objects.get(pk=teacher_id)
+
+            period_id = 1
+            period = Period.objects.get(pk=period_id)
+
+            subject_id = 1
+            subject = Subject.objects.get(pk=subject_id)
+
+            note = Note.objects.create(
+                teacher=teacher,
+                subject=subject,
+                period=period,
+                user=teacher.user 
+            )
+
+            note_detail = NoteDetail.objects.create(
+                note=note,
+                student=student,
+                note1=50.0, 
+                note2=50.0,  
+                recuperation=0.0,  
+                observation="Buen desempeño",
+                user=student.user 
+            )
+            print("Nota y detalles de nota creados exitosamente.")
+
+        except Student.DoesNotExist:
+            print("El estudiante especificado no existe.")
+        except Teacher.DoesNotExist:
+            print("El profesor especificado no existe.")
+        except Period.DoesNotExist:
+            print("El período especificado no existe.")
+        except Subject.DoesNotExist:
+            print("La materia especificada no existe.")
+        except Exception as e:
+            print(f"Ocurrió un error al crear la nota y los detalles de nota: {e}")
+    print(purple_color + "------" * 15 + reset_color)
+    create_student_note()
+  
+      
+            
 if __name__ == "__main__":
     probar_orm()
