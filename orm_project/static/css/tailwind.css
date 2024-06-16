@@ -2,10 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'Playwrite';
+    src: url('../fonts/Playwrite/PlaywriteVN-Regular.ttf') format('woff2');
+}
 
 @font-face {
     font-family: 'Quicksand-Bold';
-    src: url('../fonts/Quicksand/Quicksand-Bold.ttf');
+    src: url('../fonts/Quicksand/Quicksand-Bold.ttf') format('woff2');
 }
 
 @font-face {

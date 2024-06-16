@@ -5,19 +5,19 @@
 
 <!-- Hero -->
 <section
-    class="relative overflow-hidden before:absolute before:top-0 before:start-1/2 before:bg-[url('https://preline.co/assets/svg/examples/squared-bg-element.svg')] dark:before:bg-[url('https://preline.co/assets/svg/examples-dark/squared-bg-element.svg')] before:bg-no-repeat before:bg-top before:size-full before:-z-[1] before:transform before:-translate-x-1/2">
+    class=" my-14 relative overflow-hidden before:absolute before:top-0 before:start-1/2 before:bg-[url('https://preline.co/assets/svg/examples/squared-bg-element.svg')] dark:before:bg-[url('https://preline.co/assets/svg/examples-dark/squared-bg-element.svg')] before:bg-no-repeat before:bg-top before:size-full before:-z-[1] before:transform before:-translate-x-1/2 dark:bg-primary ">
     <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-10">
         <!-- Announcement Banner -->
-        <div class="flex justify-center">
-            <a class="inline-flex items-center gap-x-2 bg-white border border-gray-200 text-gray-600 p-2 px-3 rounded-full transition hover:border-gray-300 dark:bg-neutral-800 dark:border-neutral-700 dark:hover:border-neutral-600 dark:text-neutral-400"
+        <div class=" p-2 flex justify-center" data-aos="fade-up">
+            <a class=" inline-flex items-center gap-x-2 bg-white border border-gray-200 text-gray-600 p-2 px-3 rounded-full transition hover:border-gray-300 dark:bg-secondary dark:border-secondary dark:hover:border-neutral-600 dark:text-neutral-400"
                 href="#">
-                SGA
+                Iguanas Corporation - SGA
                 <span class="flex items-center gap-x-1">
                     <span
                         class="border-s border-gray-200 text-blue-600 ps-2 dark:text-purple-500  dark:border-gray-700">Explorar</span>
-                    <svg class="flex-shrink-0 size-4 text-blue-600 dark:text-purple-300" xmlns="http://www.w3.org/2000/svg" width="24"
-                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="flex-shrink-0 size-4 text-blue-600 dark:text-purple-300"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m9 18 6-6-6-6" />
                     </svg>
                 </span>
@@ -26,15 +26,14 @@
         <!-- End Announcement Banner -->
 
         <!-- Title -->
-        <div class="mt-5 max-w-xl text-center mx-auto">
-            <h1
-                class="block font-bold uppercase text-black text-4xl md:text-5xl lg:text-6xl dark:text-purple-300 my-4">
-                Sistema de Gestion Academica
+        <div class="mt-5 max-w-xl text-center mx-auto" data-aos="fade-up" data-aos-delay="200">
+            <h1 class="block font-bold uppercase text-black text-4xl md:text-5xl lg:text-6xl dark:text-purple-300 my-4">
+                Sistema de gestión académica
             </h1>
         </div>
         <!-- End Title -->
         <div class="mt-5 max-w-3xl text-center mx-auto">
-            <p class="text-lg text-gray-600 dark:text-neutral-400">Gestione su centro educativo y administre las notas
+            <p class="dark:text-neutral-400">Gestione su centro educativo y administre las notas
                 de sus estudiantes.</p>
         </div>
 
@@ -42,12 +41,245 @@
         <div class="mt-8 gap-3 flex justify-center">
             <a class="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 border border-transparent text-white font-medium rounded-full py-3 px-4 dark:focus:ring-offset-gray-800"
                 href="#">
-                Iniciar Sesion
+                Empezar
             </a>
         </div>
         <!-- End Buttons -->
     </div>
 </section>
 <!-- End Hero -->
+
+<!-- Features -->
+<section class="bg-purple-200 my-8 pt-10 dark:bg-primary" data-aos="fade-up" data-aos-delay="200">
+    <!-- Title -->
+    <div class="max-w-xl text-center mx-auto">
+        <h1 class="block font-bold uppercase text-black text-3xl md:text-5xl lg:text-6xl dark:text-purple-300 my-4">
+            Módulos
+        </h1>
+    </div>
+    <!-- End Title -->
+    <div class="mt-5 max-w-3xl text-center mx-auto">
+        <p class="text-lg text-gray-600 dark:text-neutral-400">Le ofrecemos multiples módulos para la eficiente gestion
+            educativa.</p>
+    </div>
+    <!-- Models -->
+    <div class="relative pt-2 lg:pt-2 min-h-screen">
+        <div class="bg-cover w-full flex justify-center items-center">
+            <div class="w-full p-5  bg-opacity-40 backdrop-filter backdrop-blur-lg">
+                <div class="w-12/12 mx-auto rounded-3xl p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 justify-center text-center px-2 mx-auto">
+                        <!-- Models 1 -->
+                        <article
+                            class="bg-purple-100 dark:bg-secondary dark:border-none p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-3xl cursor-pointer border">
+                            <a target="_self" href="{% url 'sga:period_list' %}"
+                                class="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
+                            <div class="relative mb-4 rounded-3xl">
+                                <img class="max-h-80 rounded-3xl w-full object-cover transition-transform duration-300 transform group-hover:scale-105"
+                                    src="{% static 'img/models/period_list.jpg' %}" alt="">
+                                <!-- <div
+                                    class="absolute bottom-3 left-3 inline-flex items-center rounded-lg bg-white p-2 shadow-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-red-700">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                    </svg>
+                                    <span class="ml-1 text-sm text-slate-400">2</span>
+                                </div> -->
+                                <a class="flex justify-center items-center bg-purple-700 bg-opacity-50 z-10 absolute top-0 left-0 w-full h-full text-white rounded-3xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-xl group-hover:opacity-85"
+                                    href="{% url 'sga:period_list' %}" target="_self" rel="noopener noreferrer">
+                                    Ingresar
+                                    <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="flex items-center w-full pb-4 mb-auto justify-center">
+                                <div class="flex items-center">
+                                    <h1
+                                        class="text-black dark:text-purple-300 text-2xl font-bold uppercase text-center">
+                                        Periodo Lectivo</h1>
+                                    <i class="ri-calendar-event-fill text-2xl text-black dark:text-purple-300 px-2"></i>
+                                </div>
+                            </div>
+                            <h3 class="font-medium text-xl leading-8">
+                                <a href="{% url 'sga:period_list' %}"
+                                    class="block relative group-hover:text-purple-600 transition-colors duration-200 ">
+                                    Asigne periodos lectivos para el control de las actividades académicas.
+                                </a>
+                            </h3>
+                        </article>
+                        <!-- Models 2 -->
+                        <article
+                            class="bg-purple-100 dark:bg-secondary dark:border-none p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-3xl cursor-pointer border">
+                            <a target="_self" href="{% url 'sga:teacher_list' %}"
+                                class="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
+                            <div class="relative mb-4 rounded-3xl">
+                                <img class="max-h-80 rounded-3xl w-full object-cover transition-transform duration-300 transform group-hover:scale-105"
+                                    src="{% static 'img/models/teacher_list.jpg' %}" alt="">
+                                <a class="flex justify-center items-center bg-purple-700 bg-opacity-50 z-10 absolute top-0 left-0 w-full h-full text-white rounded-3xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-xl group-hover:opacity-85"
+                                    href="{% url 'sga:teacher_list' %}" target="_self" rel="noopener noreferrer">
+                                    Ingresar
+                                    <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="flex items-center w-full pb-4 mb-auto justify-center">
+                                <div class="flex items-center">
+                                    <h1
+                                        class="text-black dark:text-purple-300 text-2xl font-bold uppercase text-center">
+                                        Docentes</h1>
+                                    <i class="ri-presentation-fill text-2xl text-black dark:text-purple-300 px-2"></i>
+                                </div>
+                            </div>
+                            <h3 class="font-medium text-xl leading-8">
+                                <a href="{% url 'sga:teacher_list' %}"
+                                    class="block relative group-hover:text-purple-600 transition-colors duration-200 ">
+                                    Gestione docentes con facilidad. Agregue sus datos personales y laborales.
+                                </a>
+                            </h3>
+                        </article>
+                        <!-- Models 3 -->
+                        <article
+                            class="bg-purple-100 dark:bg-secondary dark:border-none p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-3xl cursor-pointer border">
+                            <a target="_self" href="{% url 'sga:student_list' %}"
+                                class="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
+                            <div class="relative mb-4 rounded-3xl">
+                                <img class="max-h-80 rounded-3xl w-full object-cover transition-transform duration-300 transform group-hover:scale-105"
+                                    src="{% static 'img/models/student_list.jpg' %}" alt="">
+                                <a class="flex justify-center items-center bg-purple-700 bg-opacity-50 z-10 absolute top-0 left-0 w-full h-full text-white rounded-3xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-xl group-hover:opacity-85"
+                                    href="{% url 'sga:student_list' %}" target="_self" rel="noopener noreferrer">
+                                    Ingresar
+                                    <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="flex items-center w-full pb-4 mb-auto justify-center">
+                                <div class="flex items-center">
+                                    <h1
+                                        class="text-black dark:text-purple-300 text-2xl font-bold uppercase text-center">
+                                        Estudiantes</h1>
+                                    <i class="ri-graduation-cap-fill text-2xl text-black dark:text-purple-300 px-2"></i>
+                                </div>
+                            </div>
+                            <h3 class="font-medium text-xl leading-8">
+                                <a href="{% url 'sga:student_list' %}"
+                                    class="block relative group-hover:text-purple-600 transition-colors duration-200 ">
+                                    Gestione estudiantes con facilidad. Agregue sus datos personales.
+                                </a>
+                            </h3>
+                        </article>
+                        <!-- Models 4 -->
+                        <article
+                            class="bg-purple-100 dark:bg-secondary dark:border-none p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-3xl cursor-pointer border">
+                            <a target="_self" href="{% url 'sga:subject_list' %}"
+                                class="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
+                            <div class="relative mb-4 rounded-3xl">
+                                <img class="max-h-80 rounded-3xl w-full object-cover transition-transform duration-300 transform group-hover:scale-105"
+                                    src="{% static 'img/models/subject_list.jpg' %}" alt="">
+                                <a class="flex justify-center items-center bg-purple-700 bg-opacity-50 z-10 absolute top-0 left-0 w-full h-full text-white rounded-3xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-xl group-hover:opacity-85"
+                                    href="{% url 'sga:subject_list' %}" target="_self" rel="noopener noreferrer">
+                                    Ingresar
+                                    <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="flex items-center w-full pb-4 mb-auto justify-center">
+                                <div class="flex items-center">
+                                    <h1
+                                        class="text-black dark:text-purple-300 text-2xl font-bold uppercase text-center">
+                                        Asignaturas</h1>
+                                    <i class="ri-book-fill text-2xl text-black dark:text-purple-300 px-2"></i>
+                                </div>
+                            </div>
+                            <h3 class="font-medium text-xl leading-8">
+                                <a href="{% url 'sga:subject_list' %}"
+                                    class="block relative group-hover:text-purple-600 transition-colors duration-200 ">
+                                    Gestione sus asignaturas con facilidad. Agregue sus materias.
+                                </a>
+                            </h3>
+                        </article>
+                        <!-- Models 5 -->
+                        <article
+                            class="bg-purple-100 dark:bg-secondary dark:border-none p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-3xl cursor-pointer border">
+                            <a target="_self" href="{% url 'sga:notes_list' %}"
+                                class="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
+                            <div class="relative mb-4 rounded-3xl">
+                                <img class="max-h-80 rounded-3xl w-full object-cover transition-transform duration-300 transform group-hover:scale-105"
+                                    src="{% static 'img/models/notes_list.jpg' %}" alt="">
+                                <a class="flex justify-center items-center bg-purple-700 bg-opacity-50 z-10 absolute top-0 left-0 w-full h-full text-white rounded-3xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-xl group-hover:opacity-85"
+                                    href="{% url 'sga:notes_list' %}" target="_self" rel="noopener noreferrer">
+                                    Ingresar
+                                    <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="flex items-center w-full pb-4 mb-auto justify-center">
+                                <div class="flex items-center">
+                                    <h1
+                                        class="text-black dark:text-purple-300 text-2xl font-bold uppercase text-center">
+                                        Notas</h1>
+                                    <i class="ri-sticky-note-add-fill text-2xl text-black dark:text-purple-300 px-2"></i>
+                                </div>
+                            </div>
+                            <h3 class="font-medium text-xl leading-8">
+                                <a href="{% url 'sga:notes_list' %}"
+                                    class="block relative group-hover:text-purple-600 transition-colors duration-200 ">
+                                    Establezca notas para las asignaturas de los estudiantes.
+                                </a>
+                            </h3>
+                        </article>
+                        <!-- Models 6 -->
+                        <article
+                            class="bg-purple-100 dark:bg-secondary dark:border-none p-6 mb-6 shadow transition duration-300 group transform hover:-translate-y-2 hover:shadow-2xl rounded-3xl cursor-pointer border">
+                            <a target="_self" href="{% url 'sga:notes_detail_list' %}"
+                                class="absolute opacity-0 top-0 right-0 left-0 bottom-0"></a>
+                            <div class="relative mb-4 rounded-3xl">
+                                <img class="max-h-80 rounded-3xl w-full object-cover transition-transform duration-300 transform group-hover:scale-105"
+                                    src="{% static 'img/models/notes_detail_list.jpg' %}" alt="">
+                                <a class="flex justify-center items-center bg-purple-700 bg-opacity-50 z-10 absolute top-0 left-0 w-full h-full text-white rounded-3xl opacity-0 transition-all duration-300 transform group-hover:scale-105 text-xl group-hover:opacity-85"
+                                    href="{% url 'sga:notes_detail_list' %}" target="_self" rel="noopener noreferrer">
+                                    Ingresar
+                                    <svg class="ml-2 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="flex items-center w-full pb-4 mb-auto justify-center">
+                                <div class="flex items-center">
+                                    <h1
+                                        class="text-black dark:text-purple-300 text-2xl font-bold uppercase text-center">
+                                        Detalles de Notas</h1>
+                                    <i class="ri-sticky-note-fill text-2xl text-black dark:text-purple-300 px-2"></i>
+                                </div>
+                            </div>
+                            <h3 class="font-medium text-xl leading-8">
+                                <a href="{% url 'sga:notes_detail_list' %}"
+                                    class="block relative group-hover:text-purple-600 transition-colors duration-200 ">
+                                    Asigne detalles de las calificaciones de estudiantes. Agregue notas y observaciones.
+                                </a>
+                            </h3>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 {% endblock content %}
