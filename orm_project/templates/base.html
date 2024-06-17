@@ -28,6 +28,7 @@
 </head>
 
 <body class="text-gray-600 bg-purple-100 dark:bg-primary text-lg">
+	<!-- Navbar -->
 	<header class="top-0 left-0 right-0 z-50 bg-transparent fixed w-full transition duration-300 ease-in-out">
 		<nav class="bg-purple-100 border-gray-200 dark:bg-primary">
 			<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -60,6 +61,7 @@
 		</nav>
 		<hr class="border-gray-200 dark:border-gray-700">
 	</header>
+	<!-- End Navbar -->
 
 	<!-- Contenido -->
 	<section>
@@ -68,11 +70,40 @@
 	</section>
 	<!-- Cierre del contenido -->
 
+	<!-- Footer -->
+	<footer class="rounded-lg shadow dark:bg-secondary m-4">
+		<div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+			<div class="sm:flex sm:items-center sm:justify-between">
+				<a href="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+					<img src="{% static 'img/ic_logo.png' %}" alt="logo" class="w-16 h-16">
+					<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Iguanas Corporation - SGA</span>
+				</a>
+				<ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+					<li>
+						<a href="#" class="hover:underline me-4 md:me-6">About</a>
+					</li>
+					<li>
+						<a href="#" class="hover:underline me-4 md:me-6">Privacy Policy</a>
+					</li>
+					<li>
+						<a href="#" class="hover:underline me-4 md:me-6">Licensing</a>
+					</li>
+					<li>
+						<a href="#" class="hover:underline">Contact</a>
+					</li>
+				</ul>
+			</div>
+			<hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+			<span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="/" class="hover:underline">Iguanas Corporation - SGA</a>. All Rights Reserved.</span>
+		</div>
+	</footer>
+	<!-- End Footer -->
 
 	<!-- Data AOS -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
 		integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
-		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		crossorigin="anonymous" referrerpolicy="no-referrer">
+	</script>
 	<script>
 		AOS.init();
 	</script>

@@ -20,7 +20,7 @@ Pasos para consultar datos en en Shell de Django:
 <- WEB ->
 Ejecutar para realizar cambios:
     py manage.py livereload
-    npm run build
+    npm run watch
     py manage.py runserver
 
     
